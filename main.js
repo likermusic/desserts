@@ -1,4 +1,5 @@
 import "./src/assets/css/style.css";
+import "./src/queries";
 
 document.querySelector("#app").innerHTML = `
   <header>
