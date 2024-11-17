@@ -5,12 +5,46 @@ export const getItems = async (url) => {
       throw new Error("Ошибка получения данных");
     }
     const data = await resp.json();
-
     return data;
   } catch (error) {
-    console.error(error.message);
+    return error.message;
   }
 };
+
+export const addItem = async (url, item) => {
+  try {
+    const resp = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(item),
+    });
+
+    if (!resp.ok) {
+      throw new Error("Ошибка запроса");
+    }
+  } catch (error) {
+    return error.message;
+  }
+};
+
+export const removeItem = async (url) => {
+  try {
+    const resp = await fetch(url, {
+      method: "DELETE",
+    });
+    if (!resp.ok) {
+      throw new Error("Ошибка запроса");
+    }
+  } catch (error) {
+    return error.message;
+  }
+};
+
+// getItems("/api/products");
+// getItems("/api/cart");
+// removeItem("/api/1");
 
 const printItem = (item, parent, position) => {
   document.querySelector(parent).insertAdjacentHTML(position, item);
@@ -18,7 +52,6 @@ const printItem = (item, parent, position) => {
 
 const productsHandler = (products) => {
   console.log(products);
-
   if (products.length > 0) {
     products.forEach((product) => {
       const productMockup = `<div class="product">
@@ -41,11 +74,7 @@ const productsHandler = (products) => {
 };
 
 const asyncWrapper = async () => {
-  const products = await getItems("http://localhost:3001/products");
-  productsHandler(products);
+  // const products = await getItems("/products");
+  // productsHandler(products);
 };
 asyncWrapper();
-
-// getItems("http://localhost:3001/products").then((products) =>
-//   productsHandler(products),
-// );

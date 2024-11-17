@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently \"vite\" \"npm run backend\"",
+    "frontend": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "backend": "json-server --watch db.json --port 3001",
