@@ -11,6 +11,43 @@ export const getItems = async (url) => {
   }
 };
 
+export const getItem = async (url) => {
+  try {
+    const resp = await fetch(url);
+
+    if (url.includes("cart")) {
+      if (!resp.ok) {
+        return null;
+      } else {
+        const data = await resp.json();
+        return data;
+      }
+    } else {
+      if (!resp.ok) {
+        throw new Error("Ошибка получения данных");
+      }
+      const data = await resp.json();
+      return data;
+    }
+  } catch (error) {
+    return error.message;
+  }
+};
+
+export const getItemCart = async (url) => {
+  try {
+    const resp = await fetch(url);
+    return resp;
+    if (!resp.ok) {
+      throw new Error("Ошибка получения данных");
+    }
+    const data = await resp.json();
+    return data;
+  } catch (error) {
+    return error.message;
+  }
+};
+
 export const addItem = async (url, item) => {
   try {
     const resp = await fetch(url, {
@@ -24,6 +61,8 @@ export const addItem = async (url, item) => {
     if (!resp.ok) {
       throw new Error("Ошибка запроса");
     }
+
+    return await resp.json();
   } catch (error) {
     return error.message;
   }

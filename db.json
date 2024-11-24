@@ -22,7 +22,7 @@
       },
       "name": "Vanilla Bean Crème Brûlée",
       "category": "Crème Brûlée",
-      "price": 7.0
+      "price": 7
     },
     {
       "id": "3",
@@ -34,7 +34,7 @@
       },
       "name": "Macaron Mix of Five",
       "category": "Macaron",
-      "price": 8.0
+      "price": 8
     },
     {
       "id": "4",
@@ -58,7 +58,7 @@
       },
       "name": "Pistachio Baklava",
       "category": "Baklava",
-      "price": 4.0
+      "price": 4
     },
     {
       "id": "6",
@@ -70,7 +70,7 @@
       },
       "name": "Lemon Meringue Pie",
       "category": "Pie",
-      "price": 5.0
+      "price": 5
     },
     {
       "id": "7",

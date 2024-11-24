@@ -1,10 +1,12 @@
-import { getItems } from "./api";
+import { getItem, getItems } from "./api";
+import { renderCartItem } from "./cart";
 
 const productList = document.querySelector(".product-list");
 // eslint-disable-next-line no-unused-vars
 const renderProducts = (async () => {
   const resp = await getItems("/api/products");
-  if (Array.isArray(resp)) {
+  if (Array.isArray(resp) && resp.length > 0) {
+    // доп проверка на !пустой массив
     const productsMarkup = resp.map(
       (product) => `
       <div class="product">
@@ -29,18 +31,23 @@ const renderProducts = (async () => {
   }
 })();
 
-const createCartProduct = (e) => {
+const prepareProduct = async (e) => {
   if (e.target.matches(".add-to-cart, .add-to-cart *")) {
-    {
-      console.log(id);
-      const name = e.target.closest(".product").querySelector("h2").textContent;
-      const category = "dfdf";
-      return {
-        name: name,
-        category: category,
-      };
+    const id = e.target.closest(".product").querySelector("button").dataset.id;
+    const resp = await getItem(`/api/products/${id}`);
+    if (resp instanceof Object) {
+      return resp;
+    } else {
+      alert(resp);
+      return false;
     }
   }
 };
 
-productList.addEventListener("click", addProduct);
+productList.addEventListener("click", async (e) => {
+  const resp = await prepareProduct(e);
+  if (resp) {
+    const product = resp;
+    renderCartItem(product);
+  }
+});
