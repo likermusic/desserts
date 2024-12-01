@@ -34,7 +34,15 @@ const renderProducts = (async () => {
 const prepareProduct = async (e) => {
   if (e.target.matches(".add-to-cart, .add-to-cart *")) {
     const id = e.target.closest(".product").querySelector("button").dataset.id;
-    const resp = await getItem(`/api/products/${id}`);
+
+    const resp = await getItem(`/api/products/${id}`, async (resp) => {
+      if (!resp.ok) {
+        throw new Error("Ошибка получения данных");
+      }
+      const data = await resp.json();
+      return data;
+    });
+
     if (resp instanceof Object) {
       return resp;
     } else {

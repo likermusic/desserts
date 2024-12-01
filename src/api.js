@@ -11,38 +11,10 @@ export const getItems = async (url) => {
   }
 };
 
-export const getItem = async (url) => {
+export const getItem = async (url, callback) => {
   try {
     const resp = await fetch(url);
-
-    if (url.includes("cart")) {
-      if (!resp.ok) {
-        return null;
-      } else {
-        const data = await resp.json();
-        return data;
-      }
-    } else {
-      if (!resp.ok) {
-        throw new Error("Ошибка получения данных");
-      }
-      const data = await resp.json();
-      return data;
-    }
-  } catch (error) {
-    return error.message;
-  }
-};
-
-export const getItemCart = async (url) => {
-  try {
-    const resp = await fetch(url);
-    return resp;
-    if (!resp.ok) {
-      throw new Error("Ошибка получения данных");
-    }
-    const data = await resp.json();
-    return data;
+    return await callback(resp);
   } catch (error) {
     return error.message;
   }
@@ -59,7 +31,7 @@ export const addItem = async (url, item) => {
     });
 
     if (!resp.ok) {
-      throw new Error("Ошибка запроса");
+      throw new Error("Ошибка добавления");
     }
 
     return await resp.json();
@@ -74,8 +46,28 @@ export const removeItem = async (url) => {
       method: "DELETE",
     });
     if (!resp.ok) {
-      throw new Error("Ошибка запроса");
+      throw new Error("Ошибка удаления");
     }
+  } catch (error) {
+    return error.message;
+  }
+};
+
+export const updateItem = async (url, patch) => {
+  try {
+    const resp = await fetch(url, {
+      method: "PATCH",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(patch),
+    });
+
+    if (!resp.ok) {
+      throw new Error("Ошибка обновления");
+    }
+
+    return await resp.json();
   } catch (error) {
     return error.message;
   }
