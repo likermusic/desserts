@@ -1,5 +1,5 @@
 import { getItem, getItems } from "./api";
-import { renderCartItem } from "./cart";
+import { handleCartItem } from "./cart";
 
 const productList = document.querySelector(".product-list");
 // eslint-disable-next-line no-unused-vars
@@ -56,6 +56,6 @@ productList.addEventListener("click", async (e) => {
   const resp = await prepareProduct(e);
   if (resp) {
     const product = resp;
-    renderCartItem(product);
+    handleCartItem(product);
   }
 });
