@@ -40,19 +40,6 @@ export const addItem = async (url, item) => {
   }
 };
 
-export const removeItem = async (url) => {
-  try {
-    const resp = await fetch(url, {
-      method: "DELETE",
-    });
-    if (!resp.ok) {
-      throw new Error("Ошибка удаления");
-    }
-  } catch (error) {
-    return error.message;
-  }
-};
-
 export const updateItem = async (url, patch) => {
   try {
     const resp = await fetch(url, {
@@ -73,39 +60,53 @@ export const updateItem = async (url, patch) => {
   }
 };
 
-// getItems("/api/products");
-// getItems("/api/cart");
-// removeItem("/api/1");
-
-const printItem = (item, parent, position) => {
-  document.querySelector(parent).insertAdjacentHTML(position, item);
-};
-
-const productsHandler = (products) => {
-  console.log(products);
-  if (products.length > 0) {
-    products.forEach((product) => {
-      const productMockup = `<div class="product">
-              <!--<img src="${product.image.desktop}" alt="${product.name}">-->
-              <picture>
-                <source srcset="${product.image.desktop}" media="(min-width: 1024px)">
-                <source srcset="${product.image.tablet}" media="(min-width: 768px)">
-                <source srcset="${product.image.mobile}" media="(min-width: 320px)">
-                <source srcset="${product.image.thumbnail}" media="(min-width: 0px)">
-              </picture>
-              <h2>${product.name}</h2>
-              <p>$${product.price}</p>
-              <button data-id="${product.id}">  <img src="./src/assets/icons/icon-add-to-cart.svg" class="add-to-cart"> <span>Add to Cart</span></button>
-          </div>`;
-      printItem(productMockup, ".product-list", "beforeend");
+export const removeItem = async (url) => {
+  try {
+    const resp = await fetch(url, {
+      method: "DELETE",
     });
-  } else {
-    alert("Ошибка получения товаров");
+    if (!resp.ok) {
+      throw new Error("Ошибка удаления");
+    }
+    return await resp.json();
+  } catch (error) {
+    return error.message;
   }
 };
 
-const asyncWrapper = async () => {
-  // const products = await getItems("/products");
-  // productsHandler(products);
+export const removeOrUpdateItem = async (url) => {
+  const resp = await getItem(url, async (resp) => {
+    if (!resp.ok) {
+      throw new Error("Ошибка получения данных");
+    }
+    const data = await resp.json();
+    return data;
+  });
+
+  if (resp instanceof Object) {
+    if (resp.qty > 1) {
+      const newQty = resp.qty - 1;
+      const respUpdate = await updateItem(url, { qty: newQty });
+      if (respUpdate instanceof Object) {
+        return {
+          action: "update",
+          item: respUpdate,
+        };
+      } else {
+        alert(respUpdate);
+      }
+    } else {
+      const respRemove = await removeItem(url);
+      if (respRemove instanceof Object) {
+        return {
+          action: "remove",
+          item: respRemove,
+        };
+      } else {
+        alert(respRemove);
+      }
+    }
+  } else {
+    alert(resp);
+  }
 };
-asyncWrapper();

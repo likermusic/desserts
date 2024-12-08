@@ -1,11 +1,19 @@
-import { getItem, addItem, updateItem, getItems } from "./api";
+import { showNotification } from "./alerts";
+import {
+  getItem,
+  addItem,
+  updateItem,
+  getItems,
+  removeOrUpdateItem,
+  removeItem,
+} from "./api";
 
 const renderCartItem = (item) => {
   const itemMarkup = `<li class="cart-item" data-id="${item.id}">
   <img width="10%"  src="${item.image.thumbnail}" alt="item">
   <span>${item.name}</span>
   <span><label class="quantity">${item.qty}</label> x <label class="price">$${item.price.toFixed(2)}</label></span>
-  <img class="remove-item" src="assets/icons/icon-remove-item.svg" alt="">
+  <img class="remove-item" src="./src/assets/icons/icon-remove-item.svg" alt="">
 </li>
 `;
   document
@@ -24,22 +32,24 @@ const getCartItems = async () => {
 
 const updateTotals = async () => {
   const cart = await getCartItems();
+  const cartCount = document.querySelector(".cart-count");
+  const totalPrice = document.querySelector(".total-price");
 
   if (cart) {
-    document.querySelector(".cart-count").textContent = cart.reduce(
-      (count, item) => {
-        return count + item.qty;
-      },
-      0,
-    );
+    cartCount.textContent = cart.reduce((count, item) => {
+      return count + item.qty;
+    }, 0);
 
-    document.querySelector(".total-price").textContent =
+    totalPrice.textContent =
       "$" +
       cart
         .reduce((sum, item) => {
           return sum + item.qty * item.price;
         }, 0)
         .toFixed(2);
+  } else {
+    cartCount.textContent = "0";
+    totalPrice.textContent = "$0.00";
   }
 };
 
@@ -84,9 +94,43 @@ export const addCartItem = async (item) => {
   updateTotals();
 };
 
+const removeCartItem = async (e) => {
+  if (e.target.matches(".remove-item")) {
+    const cartItem = e.target.closest(".cart-item");
+    const id = cartItem.dataset.id;
+    const updatedItem = await removeOrUpdateItem(`/api/cart/${id}`);
+
+    if (updatedItem && updatedItem.action === "update") {
+      cartItem.querySelector(".quantity").textContent = updatedItem.item.qty;
+    } else if (updatedItem && updatedItem.action === "remove") {
+      e.target.closest(".cart-item").remove();
+    }
+
+    updateTotals();
+  }
+};
+
+document.querySelector(".cart-items").addEventListener("click", (e) => {
+  removeCartItem(e);
+
+  showNotification("Товар удален");
+});
+
+document.querySelector(".confirm-order").addEventListener("click", async () => {
+  const cart = await getCartItems();
+  if (cart) {
+    cart.forEach(async (item) => await removeItem(`/api/cart/${item.id}`));
+
+    document.querySelector(".cart-items").innerHTML = "";
+    updateTotals();
+    alert("Спасибо, заказ оформлен!");
+  } else {
+    alert("Ваша корзина пуста!");
+  }
+});
+
 document.addEventListener("DOMContentLoaded", async () => {
   const items = await getCartItems();
-  console.log(items);
 
   if (items) {
     items.forEach((item) => {
