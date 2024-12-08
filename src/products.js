@@ -1,14 +1,21 @@
 import { getItem, getItems } from "./api";
-import { handleCartItem } from "./cart";
+import { addCartItem } from "./cart";
 
 const productList = document.querySelector(".product-list");
+
 // eslint-disable-next-line no-unused-vars
-const renderProducts = (async () => {
+const getProducts = (async () => {
   const resp = await getItems("/api/products");
   if (Array.isArray(resp) && resp.length > 0) {
-    // доп проверка на !пустой массив
-    const productsMarkup = resp.map(
-      (product) => `
+    renderProducts(resp);
+  } else {
+    alert(resp);
+  }
+})();
+
+const renderProducts = async (products) => {
+  const productsMarkup = products.map(
+    (product) => `
       <div class="product">
               <img src="${product.image.mobile}" alt="${product.name}">
               <!--<picture>
@@ -23,13 +30,10 @@ const renderProducts = (async () => {
               <button class="add-to-cart" data-id="${product.id}">  <img src="./src/assets/icons/icon-add-to-cart.svg"> <span>Add to Cart</span></button>
           </div>
     `,
-    );
+  );
 
-    productList.insertAdjacentHTML("beforeend", productsMarkup.join(""));
-  } else {
-    alert(resp);
-  }
-})();
+  productList.insertAdjacentHTML("beforeend", productsMarkup.join(""));
+};
 
 const prepareProduct = async (e) => {
   if (e.target.matches(".add-to-cart, .add-to-cart *")) {
@@ -56,6 +60,6 @@ productList.addEventListener("click", async (e) => {
   const resp = await prepareProduct(e);
   if (resp) {
     const product = resp;
-    handleCartItem(product);
+    addCartItem(product);
   }
 });

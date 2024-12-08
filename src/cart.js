@@ -13,18 +13,32 @@ const renderCartItem = (item) => {
     .insertAdjacentHTML("beforeend", itemMarkup);
 };
 
-const renderCart = async () => {
+const getCartItems = async () => {
   const resp = await getItems(`/api/cart`);
   if (Array.isArray(resp) && resp.length > 0) {
-    resp.forEach((item) => {
-      renderCartItem(item);
-    });
+    return resp;
   } else if (!Array.isArray(resp)) {
     alert(resp);
   }
 };
 
-export const handleCartItem = async (item) => {
+const updateCartItemQty = async (resp, item) => {
+  resp.qty += 1;
+  //Path запрос на обновление qty у этого товара в тбл
+  const respUpdate = await updateItem(`/api/cart/${item.id}`, {
+    qty: resp.qty,
+  });
+
+  if (respUpdate instanceof Object) {
+    document.querySelector(
+      `.cart-item[data-id="${item.id}"] .quantity`,
+    ).textContent = resp.qty;
+  } else {
+    alert(respUpdate);
+  }
+};
+
+export const addCartItem = async (item) => {
   const resp = await getItem(`/api/cart/${item.id}`, async (resp) => {
     if (!resp.ok) {
       return null;
@@ -35,36 +49,25 @@ export const handleCartItem = async (item) => {
   });
 
   if (resp !== null) {
-    resp.qty += 1;
-    //Path запрос на обновление qty у этого товара в тбл
-    const respUpdate = await updateItem(`/api/cart/${item.id}`, {
-      qty: resp.qty,
-    });
-
-    if (respUpdate instanceof Object) {
-      document.querySelector(
-        `.cart-item[data-id="${item.id}"] .quantity`,
-      ).textContent = resp.qty;
-    } else {
-      alert(respUpdate);
-    }
+    updateCartItemQty(resp, item);
   } else {
     item.qty = 1;
-
     const respAdd = await addItem("/api/cart", item);
 
     if (respAdd instanceof Object) {
-      // повторно назвали const и выводить нужно не из resp (==null) а из item
       renderCartItem(item);
     } else {
       alert(respAdd);
     }
   }
-
-  // if (resp instanceof Object) {
-  // } else {
-  //   alert(resp);
-  // }
 };
 
-document.addEventListener("DOMContentLoaded", renderCart);
+document.addEventListener("DOMContentLoaded", async () => {
+  const items = await getCartItems();
+
+  if (items) {
+    items.forEach((item) => {
+      renderCartItem(item);
+    });
+  }
+});
