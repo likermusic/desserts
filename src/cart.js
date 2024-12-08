@@ -22,6 +22,27 @@ const getCartItems = async () => {
   }
 };
 
+const updateTotals = async () => {
+  const cart = await getCartItems();
+
+  if (cart) {
+    document.querySelector(".cart-count").textContent = cart.reduce(
+      (count, item) => {
+        return count + item.qty;
+      },
+      0,
+    );
+
+    document.querySelector(".total-price").textContent =
+      "$" +
+      cart
+        .reduce((sum, item) => {
+          return sum + item.qty * item.price;
+        }, 0)
+        .toFixed(2);
+  }
+};
+
 const updateCartItemQty = async (resp, item) => {
   resp.qty += 1;
   //Path запрос на обновление qty у этого товара в тбл
@@ -60,14 +81,17 @@ export const addCartItem = async (item) => {
       alert(respAdd);
     }
   }
+  updateTotals();
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
   const items = await getCartItems();
+  console.log(items);
 
   if (items) {
     items.forEach((item) => {
       renderCartItem(item);
     });
+    updateTotals();
   }
 });

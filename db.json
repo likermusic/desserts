@@ -121,7 +121,7 @@
       "name": "Waffle with Berries",
       "category": "Waffle",
       "price": 6.5,
-      "qty": 1
+      "qty": 6
     },
     {
       "id": "2",
@@ -134,7 +134,7 @@
       "name": "Vanilla Bean Crème Brûlée",
       "category": "Crème Brûlée",
       "price": 7,
-      "qty": 20
+      "qty": 5
     },
     {
       "id": "3",
@@ -147,7 +147,20 @@
       "name": "Macaron Mix of Five",
       "category": "Macaron",
       "price": 8,
-      "qty": 5
+      "qty": 2
+    },
+    {
+      "id": "5",
+      "image": {
+        "thumbnail": "/assets/images/image-baklava-thumbnail.jpg",
+        "mobile": "/assets/images/image-baklava-mobile.jpg",
+        "tablet": "/assets/images/image-baklava-tablet.jpg",
+        "desktop": "/assets/images/image-baklava-desktop.jpg"
+      },
+      "name": "Pistachio Baklava",
+      "category": "Baklava",
+      "price": 4,
+      "qty": 1
     },
     {
       "id": "6",
@@ -160,20 +173,7 @@
       "name": "Lemon Meringue Pie",
       "category": "Pie",
       "price": 5,
-      "qty": 4
-    },
-    {
-      "id": "8",
-      "image": {
-        "thumbnail": "/assets/images/image-brownie-thumbnail.jpg",
-        "mobile": "/assets/images/image-brownie-mobile.jpg",
-        "tablet": "/assets/images/image-brownie-tablet.jpg",
-        "desktop": "/assets/images/image-brownie-desktop.jpg"
-      },
-      "name": "Salted Caramel Brownie",
-      "category": "Brownie",
-      "price": 4.5,
-      "qty": 2
+      "qty": 1
     }
   ]
 }
